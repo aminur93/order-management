@@ -43,5 +43,14 @@ Route::group(['prefix' => 'v1/admin', 'middleware' => 'jwtAuth'], function (){
     Route::put('/customer/{id}', [\App\Http\Controllers\Api\V1\Admin\CustomerController::class, 'update'])->name('customer.update');
     Route::delete('/customer/{id}', [\App\Http\Controllers\Api\V1\Admin\CustomerController::class, 'destroy']);
     /*customer route start*/
+
+
+    /*order route start*/
+    Route::get('/order', [\App\Http\Controllers\Api\V1\Admin\OrderController::class, 'index']);
+    Route::post('/order', [\App\Http\Controllers\Api\V1\Admin\OrderController::class, 'store'])->name('order.store');
+    Route::get('/order/{id}', [\App\Http\Controllers\Api\V1\Admin\OrderController::class, 'show']);
+    Route::put('/order/{id}', [\App\Http\Controllers\Api\V1\Admin\OrderController::class, 'update'])->name('order.update');
+    Route::delete('/order/{id}', [\App\Http\Controllers\Api\V1\Admin\OrderController::class, 'destroy']);
+    /*order route end*/
 });
 /*Admin route end*/
