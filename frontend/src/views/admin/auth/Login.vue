@@ -75,7 +75,6 @@ export default {
 
 <template>
   <div class="login">
-    <div class="login">
       <div class="wrapper">
         <form v-on:submit.prevent="login">
           <h2>Login</h2>
@@ -112,7 +111,6 @@ export default {
           </div>
         </form>
       </div>
-    </div>
   </div>
 </template>
 

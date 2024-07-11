@@ -9,6 +9,7 @@ import * as actions from "./actions";
 /*module import start*/
 import customer from "@/store/modules/customer";
 import product from "@/store/modules/product";
+import order from "@/store/modules/order";
 /*module import end*/
 
 const store = createStore({
@@ -19,7 +20,8 @@ const store = createStore({
 
     modules: {
         customer,
-        product
+        product,
+        order
     },
 
     plugins: [

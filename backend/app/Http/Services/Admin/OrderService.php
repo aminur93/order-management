@@ -10,7 +10,7 @@ class OrderService
 {
     public function index(Request $request)
     {
-        $order = Order::with('orderItems', 'customer');
+        $order = Order::with('orderItems','orderItems.product', 'customer');
 
         if ($request->has('sortBy') && $request->has('sortDesc'))
         {
@@ -51,7 +51,7 @@ class OrderService
 
     public function getAllOrders()
     {
-        $orders = Order::with('orderItems', 'customers')->get();
+        $orders = Order::with('orderItems', 'orderItems.product', 'customers')->get();
         return $orders;
     }
 
@@ -65,7 +65,7 @@ class OrderService
 
             $order->customer_id = $request->customer_id;
             $order->total_amount = $request->total_amount;
-            $order->status = $request->status;
+            $order->status = $request->status == 'true' ? 1 : 0;
             $order->save();
 
             $order->orderItems()->createMany($request->orderItems);
@@ -84,7 +84,7 @@ class OrderService
 
     public function show($id)
     {
-        $order = Order::with('orderItems', 'customer')->find($id);
+        $order = Order::with('orderItems', 'orderItems.product', 'customer')->find($id);
         return $order;
     }
 
@@ -93,11 +93,11 @@ class OrderService
         DB::beginTransaction();
 
         try {
-            $order = Order::find($id);
+            $order = Order::findOrFail($id);
 
             $order->customer_id = $request->customer_id;
             $order->total_amount = $request->total_amount;
-            $order->status = $request->status;
+            $order->status = $request->status == 'true' ? 1 : 0;
             $order->save();
 
             $order->orderItems()->delete();

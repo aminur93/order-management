@@ -77,6 +77,8 @@ class OrderController extends Controller
 
     public function update(OrderRequest $request, $id)
     {
+        //return $request->all();
+
         try {
 
             $customer = $this->orderService->update($request, $id);
