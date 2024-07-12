@@ -28,4 +28,4 @@
   - frontend (run npm install)
   - Run docker-compose -f docker-compose-tools-db.yaml up -d
   - Run docker-compose -f docker-compose-stagging.yaml up -d
-  - Enjpy this application
+  - Enjoy this application
