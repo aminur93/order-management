@@ -7,12 +7,12 @@
   - Dcoker
   - Mysql (Database)
 
-### Backend apis
+## Backend apis
   - customer crud
   - product crud
   - order crud
 
-### Frontend component
+## Frontend component
   - Login
   - Register
   - Logout
@@ -22,7 +22,7 @@
   - Import
   - Export
 
-### Instruction to run this application
+## Instruction to run this application
   - git clone this repo
   - backend (run composer install)
   - frontend (run npm install)
