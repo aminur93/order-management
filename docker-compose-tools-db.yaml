@@ -1,0 +1,38 @@
+version: '3.5'
+
+networks:
+  web-app-net:
+    name: my-web-app-net
+    driver: bridge
+
+volumes:
+  db-storage:
+
+services:
+  mariadb:
+    image: mariadb:10.5.5
+    ports:
+      - 3306:3306
+    volumes:
+      - db-storage:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    networks:
+      - web-app-net
+
+  phpadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 8081:80
+    networks:
+      - web-app-net
+    depends_on:
+      - mariadb
+    restart: on-failure
+#end of scripts

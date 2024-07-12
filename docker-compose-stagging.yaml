@@ -1,0 +1,39 @@
+version: '3.8'
+
+networks:
+   web-app-net:
+       name: my-web-app-net
+       driver: bridge
+
+services:
+   backend:
+     image: backend-order-management-service:1.0
+     build:
+       context: ./backend
+       target: php
+       dockerfile: Dockerfile
+       args:
+        - APP_ENV=${APP_ENV}
+     restart: unless-stopped
+     environment:
+       - APP_ENV=${APP_ENV}
+       - DB_HOST=mariadb
+       - DB_PORT=3306
+       - DB_DATABASE=order_management
+       - DB_USERNAME=root
+       - DB_PASSWORD=root
+     ports:
+       - 8000:8000
+     networks:
+       - web-app-net
+
+  #  frontend:
+  #    image: frontend-order-management-service:1.0
+  #    build:
+  #      context: ./frontend
+  #      dockerfile: Dockerfile
+  #    ports:
+  #      - 8080:80
+  #    networks:
+  #      - web-app-net
+##End of Scripts

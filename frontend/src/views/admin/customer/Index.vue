@@ -1,6 +1,7 @@
 <script>
 import {mapState} from "vuex";
-import {http} from "@/service/HttpService";
+import {http, httpFile} from "@/service/HttpService";
+import { saveAs } from 'file-saver';
 
 export default {
   name: "CustomerIndex",
@@ -21,6 +22,9 @@ export default {
         { title: 'Address', key: 'address' },
         { title: 'Actions', key: 'actions', align: 'center', sortable: false },
       ],
+
+      dialog: false,
+      file: null
     }
   },
 
@@ -111,6 +115,83 @@ export default {
         });
       }
     },
+
+    customerExport: async function(){
+      try {
+        const response = await httpFile().get('/v1/admin/customer-download', {
+          responseType: 'blob', // Important for handling binary data
+        });
+
+        const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        saveAs(blob, 'customers.xlsx');
+
+        this.$swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: 'Export successful',
+          showConfirmButton: false,
+          timer: 1500
+        });
+      }catch (e) {
+        console.error('Export failed:', e);
+        this.$swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'error',
+          title: 'Export failed',
+          showConfirmButton: false,
+          timer: 1500
+        });
+      }
+    },
+
+    customerImport: async function(){
+      if (!this.file) {
+        // Handle case where no file is selected
+        this.$swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Please select a file to import!',
+        });
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', this.file);
+
+      try {
+        await httpFile().post('/v1/admin/customer/import', formData);
+
+        this.$swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: 'Import successful',
+          showConfirmButton: false,
+          timer: 1500
+        });
+
+        this.dialog = false;
+
+        this.getAllCustomers();
+
+        // Optionally refresh data or perform other actions after successful import
+      } catch (error) {
+        console.error('Import failed:', error);
+        this.$swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'error',
+          title: 'Import failed',
+          showConfirmButton: false,
+          timer: 1500
+        });
+      } finally {
+        // Reset file input to allow re-import of the same file
+        this.file = null;
+      }
+    },
   }
 }
 </script>
@@ -140,6 +221,16 @@ export default {
                     <v-btn color="success" router to="/add-customer">
                       <v-icon small left>mdi-plus</v-icon>
                       <span>Add New</span>
+                    </v-btn>
+
+                    <v-btn color="primary" @click="dialog = true">
+                      <v-icon small left>mdi mdi-import</v-icon>
+                      <span>Import</span>
+                    </v-btn>
+
+                    <v-btn color="info" @click="customerExport">
+                      <v-icon small left>mdi mdi-file-export</v-icon>
+                      <span>Export</span>
                     </v-btn>
                   </v-card-actions>
                 </v-col>
@@ -195,6 +286,68 @@ export default {
                     </v-row>
                   </template>
                 </v-data-table-server>
+
+                <v-dialog v-model="dialog" width="50%" height="600px">
+                  <v-row class="mx-5 mt-5">
+                    <v-col cols="12">
+                      <v-row>
+                        <v-col cols="12" md="12" sm="12" lg="12">
+                          <v-card>
+                            <v-card-title><h3>Customer Import</h3></v-card-title>
+
+                            <v-divider></v-divider>
+
+                            <v-card-text>
+                              <v-form v-on:submit.prevent="customerImport">
+
+                                <v-col cols="12">
+                                  <v-row wrap>
+
+                                    <v-col cols="12" class="d-flex">
+                                      <v-row wrap>
+                                        <v-col cols="12" md="8" sm="4" lg="12">
+                                          <v-file-input
+                                              v-model="file"
+                                              label="File"
+                                              persistent-hint
+                                              variant="outlined"
+                                              accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                                          ></v-file-input>
+                                        </v-col>
+                                      </v-row>
+                                    </v-col>
+
+                                  </v-row>
+
+                                  <v-row wrap>
+                                    <v-col cols="12" md="8" sm="12" lg="12" :class="['d-flex', 'justify-end']">
+                                      <v-btn
+                                          flat
+                                          color="primary"
+                                          class="custom-btn mr-2"
+                                          @click="dialog = false"
+                                      >
+                                        Close
+                                      </v-btn>
+                                      <v-btn
+                                          flat
+                                          color="success"
+                                          type="submit"
+                                          class="custom-btn mr-2"
+                                      >
+                                        Submit
+                                      </v-btn>
+                                    </v-col>
+                                  </v-row>
+                                </v-col>
+                              </v-form>
+                            </v-card-text>
+                          </v-card>
+                        </v-col>
+                      </v-row>
+                    </v-col>
+                  </v-row>
+                </v-dialog>
 
               </v-card-text>
 

@@ -1,7 +1,12 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Admin\CustomerController;
+use App\Http\Controllers\Api\V1\Admin\OrderController;
+use App\Http\Controllers\Api\V1\Admin\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+
 
 /* Auth route start*/
 Route::group(['prefix' => 'v1/auth'], function (){
@@ -25,32 +30,35 @@ Route::group(['prefix' => 'v1/auth'], function (){
 /* Auth route end*/
 
 /*Admin route start*/
-Route::group(['prefix' => 'v1/admin', 'middleware' => 'jwtAuth'], function (){
+Route::group(['prefix' => 'v1/admin' , 'middleware' => 'jwtAuth'], function (){
 
     /*products route start*/
-    Route::get('/products', [\App\Http\Controllers\Api\V1\Admin\ProductController::class, 'index']);
-    Route::post('/products', [\App\Http\Controllers\Api\V1\Admin\ProductController::class, 'store'])->name('product.store');
-    Route::get('/products/{id}', [\App\Http\Controllers\Api\V1\Admin\ProductController::class, 'show']);
-    Route::put('/products/{id}', [\App\Http\Controllers\Api\V1\Admin\ProductController::class, 'update'])->name('product.update');
-    Route::delete('/products/{id}', [\App\Http\Controllers\Api\V1\Admin\ProductController::class, 'destroy']);
+    Route::get('/products', [ProductController::class, 'index']);
+    Route::post('/products', [ProductController::class, 'store'])->name('product.store');
+    Route::get('/products/{id}', [ProductController::class, 'show']);
+    Route::put('/products/{id}', [ProductController::class, 'update'])->name('product.update');
+    Route::delete('/products/{id}', [ProductController::class, 'destroy']);
     /*products route end*/
 
 
     /*customer route start*/
-    Route::get('/customer', [\App\Http\Controllers\Api\V1\Admin\CustomerController::class, 'index']);
-    Route::post('/customer', [\App\Http\Controllers\Api\V1\Admin\CustomerController::class, 'store'])->name('customer.store');
-    Route::get('/customer/{id}', [\App\Http\Controllers\Api\V1\Admin\CustomerController::class, 'show']);
-    Route::put('/customer/{id}', [\App\Http\Controllers\Api\V1\Admin\CustomerController::class, 'update'])->name('customer.update');
-    Route::delete('/customer/{id}', [\App\Http\Controllers\Api\V1\Admin\CustomerController::class, 'destroy']);
+    Route::get('/customer', [CustomerController::class, 'index']);
+    Route::post('/customer', [CustomerController::class, 'store'])->name('customer.store');
+    Route::get('/customer/{id}', [CustomerController::class, 'show']);
+    Route::put('/customer/{id}', [CustomerController::class, 'update'])->name('customer.update');
+    Route::delete('/customer/{id}', [CustomerController::class, 'destroy']);
+
+    Route::post('customer/import', [CustomerController::class, 'import'])->name('customer.import');
+    Route::get('customer-download', [CustomerController::class, 'download'])->name('customer.export');
     /*customer route start*/
 
 
     /*order route start*/
-    Route::get('/order', [\App\Http\Controllers\Api\V1\Admin\OrderController::class, 'index']);
-    Route::post('/order', [\App\Http\Controllers\Api\V1\Admin\OrderController::class, 'store'])->name('order.store');
-    Route::get('/order/{id}', [\App\Http\Controllers\Api\V1\Admin\OrderController::class, 'show']);
-    Route::put('/order/{id}', [\App\Http\Controllers\Api\V1\Admin\OrderController::class, 'update'])->name('order.update');
-    Route::delete('/order/{id}', [\App\Http\Controllers\Api\V1\Admin\OrderController::class, 'destroy']);
+    Route::get('/order', [OrderController::class, 'index']);
+    Route::post('/order', [OrderController::class, 'store'])->name('order.store');
+    Route::get('/order/{id}', [OrderController::class, 'show']);
+    Route::put('/order/{id}', [OrderController::class, 'update'])->name('order.update');
+    Route::delete('/order/{id}', [OrderController::class, 'destroy']);
     /*order route end*/
 });
 /*Admin route end*/

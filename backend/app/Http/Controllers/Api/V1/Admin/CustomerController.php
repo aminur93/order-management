@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\Exports\CustomerExport;
 use App\Helper\GlobalResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Services\Admin\CustomerService;
+use App\Imports\CustomerImport;
+use App\Models\Customer;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CustomerController extends Controller
 {
@@ -112,5 +116,18 @@ class CustomerController extends Controller
 
             return GlobalResponse::error("", $exception->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public function import(Request $request)
+    {
+        $file = $request->file('file');
+        Excel::import(new CustomerImport(), $file);
+
+        return GlobalResponse::success('', "Import successful", Response::HTTP_OK);
+    }
+
+    public function download()
+    {
+        return Excel::download(new CustomerExport(), 'customers.xlsx');
     }
 }
